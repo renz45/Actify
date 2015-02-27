@@ -1,17 +1,26 @@
 var bodyParser = require('body-parser');
 var expressHandlebars = require('express-handlebars');
-
 var passport = require('passport');
 var cookieSession = require('cookie-session');
 var cookieParser = require('cookie-parser');
 var csrf = require('csurf');
+var settings = require('./settings');
+var path = require('path');
 
 module.exports = function(app, express) {
-  // Set handlebars as the templating engine
-  app.engine('handlebars', expressHandlebars({ defaultLayout: 'main'}));
-  app.set('view engine', 'handlebars');
+  console.log("view path: ", settings.viewsPath)
   // Set the view directory, this enables us to use the .render method inside routes
-  app.set('views', __dirname + '../app/views');
+  app.set('views', settings.viewsPath);
+
+  // Set handlebars as the templating engine
+  app.engine('hbs', expressHandlebars({
+    extname: "hbs",
+    defaultLayout: 'main',
+    layoutsDir: path.join(settings.viewsPath, "layouts")
+    // partialsDir: path.join(settings.viewsPath, "partials")
+  }));
+
+  app.set('view engine', 'hbs');
 
   // Disable etag headers on responses
   // app.disable('etag');
